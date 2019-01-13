@@ -3,7 +3,7 @@ import { createStore } from '../base/createStore'
 import { GetStateParams, ReduxReducer, StateInitializer } from '../types'
 import { useExternalReducer } from './useExternalReducer'
 
-const StoreContext = createContext(createStore<any>([]))
+export const StoreContext = createContext(createStore<any>([{}]))
 
 export function useContextReducer<P, E>(
     reducer: ReduxReducer<P, E>,
