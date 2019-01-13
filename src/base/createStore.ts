@@ -36,7 +36,7 @@ function createInnerStore<E>(storage: Array<E>): StoreForEnhancer<E> {
             _subscribers.forEach(s => s()) // FIXME try-catch
         },
         getState: <P>(...params: GetStateParams<P, E>): P => {
-            const [reducer, initializeState] = params
+            const [reducer, initializer] = params
             const isCacheReusable =
                 _stateCache.has(reducer) &&
                 _stateCache.get(reducer)!.cursor <= _cursor
@@ -44,12 +44,12 @@ function createInnerStore<E>(storage: Array<E>): StoreForEnhancer<E> {
                 ? _stateCache.get(reducer)!
                 : {
                       state:
-                          typeof initializeState !== 'function'
+                          typeof initializer !== 'function'
                               ? _events.reduce(
                                     reducer as ReduxReducer<P, E>,
                                     undefined,
                                 )
-                              : initializeState(_events),
+                              : initializer(_events),
                       cursor: _cursor,
                   }
             let next: P = prev.state
