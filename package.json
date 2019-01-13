@@ -1,0 +1,48 @@
+{
+    "name": "flock-js",
+    "version": "0.0.1",
+    "description": "Coordinate React components's states with event sourcing",
+    "main": "dist/src/index.js",
+    "types": "dist/src/index.d.ts",
+    "files": [
+        "dist",
+        "src"
+    ],
+    "sideEffects": false,
+    "scripts": {
+        "prepublishOnly": "rm -rf dist && npx tsc",
+        "test": "npx jest",
+        "format": "npx prettier --write **/*.{js,jsx,ts,tsx,json}"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/pinyin/flock-js.git"
+    },
+    "keywords": [
+        "react",
+        "state management"
+    ],
+    "author": "Bo Bao <bob432091@gmail.com> (https://github.com/pinyin)",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/pinyin/flock-js/issues"
+    },
+    "homepage": "https://github.com/pinyin/flock-js#readme",
+    "devDependencies": {
+        "@types/jest": "^23.3.12",
+        "@types/react": "^16.7.18",
+        "@types/react-test-renderer": "^16.0.3",
+        "jest": "^23.6.0",
+        "prettier": "^1.15.3",
+        "react-test-renderer": "^16.8.0-alpha.0",
+        "ts-jest": "^23.10.5",
+        "typescript": "^3.2.2",
+        "react": "^16.8.0-alpha.0",
+        "react-dom": "^16.8.0-alpha.0"
+    },
+    "peerDependencies": {
+        "@types/react": "^16.7.18",
+        "react": "^16.8.0-alpha.0",
+        "react-dom": "^16.8.0-alpha.0"
+    }
+}

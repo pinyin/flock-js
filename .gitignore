@@ -1,0 +1,10 @@
+/node_modules
+
+dist
+**/dist/*
+src/**/*.js
+
+.vscode
+.idea
+.cache
+/report.html
