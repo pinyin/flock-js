@@ -1,5 +1,4 @@
 import { createStore, Store } from '..'
-import { toInitializer } from '../base/toInitializer'
 import { attachProcess, Process } from './attachProcess'
 
 describe(`${attachProcess.name}`, () => {
@@ -7,7 +6,7 @@ describe(`${attachProcess.name}`, () => {
         const receive = jest.fn()
         const reducer = jest.fn()
         const process: Process<E> = (store: Store<E>) => {
-            store.getState(reducer, toInitializer(reducer))
+            store.getState(reducer)
             return store.subscribe(receive)
         }
         const store = createStore<E>(
@@ -28,7 +27,7 @@ describe(`${attachProcess.name}`, () => {
         const reducer = jest.fn()
         const terminate = jest.fn()
         const process: Process<E> = (store: Store<E>) => {
-            store.getState(reducer, toInitializer(reducer))
+            store.getState(reducer)
             const unsubscribe = store.subscribe(receive)
             return () => {
                 terminate()

@@ -1,6 +1,5 @@
 import { Store } from '../types'
 import { createStore } from './createStore'
-import { toInitializer } from './toInitializer'
 
 describe(`${createStore.name}`, () => {
     let store: Store<E>
@@ -21,12 +20,12 @@ describe(`${createStore.name}`, () => {
         const reducer = jest.fn()
         const eventCount =
             store.getState<number>(countReducer, countInitializer) + 1
-        store.getState<number>(reducer, toInitializer(reducer))
+        store.getState<number>(reducer)
         expect(reducer).toBeCalledTimes(eventCount)
-        store.getState<number>(reducer, toInitializer(reducer))
+        store.getState<number>(reducer)
         expect(reducer).toBeCalledTimes(eventCount)
         store.dispatch({ type: 'add', value: 2 })
-        store.getState<number>(reducer, toInitializer(reducer))
+        store.getState<number>(reducer)
         expect(reducer).toBeCalledTimes(eventCount + 1)
     })
     it(`should use initializer iff no cache is present`, () => {
@@ -74,5 +73,3 @@ function sumReducer(prev: number | undefined, event: E) {
             return prev - event.value
     }
 }
-
-const initializer = toInitializer(sumReducer)

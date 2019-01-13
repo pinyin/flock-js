@@ -1,5 +1,13 @@
 import { Reducer } from 'react'
-import { ReduxReducer, StateInitializer, StoreEnhancer, StoreForEnhancer, Subscriber, Unsubscribe } from '../types'
+import {
+    INIT,
+    InitReducer,
+    StateInitializer,
+    StoreEnhancer,
+    StoreForEnhancer,
+    Subscriber,
+    Unsubscribe,
+} from '../types'
 
 export function createStore<E>(
     prepublish: Array<E>,
@@ -37,25 +45,28 @@ function createInnerStore<E>(prepublish: Array<E>): StoreForEnhancer<E> {
             _subscribers.forEach(s => s()) // FIXME try-catch
         },
         getState: <P>(
-            reducer: Reducer<P, E>,
-            initializer: StateInitializer<P, E>,
+            reducer: Reducer<P, E> | InitReducer<P, E>,
+            initializer?: StateInitializer<P, E>,
         ): P => {
-            const isCacheReusable =
+            const isCacheUsable =
                 _stateCache.has(reducer) &&
                 _stateCache.get(reducer)!.cursor <= _cursor
-            const prev: StateCacheItem = isCacheReusable
+            const prev = isCacheUsable
                 ? _stateCache.get(reducer)!
                 : {
                       state:
-                          typeof initializer !== 'function'
-                              ? _events.reduce(
-                                    reducer as ReduxReducer<P, E>,
-                                    undefined,
-                                )
-                              : initializer(_events),
+                          typeof initializer === 'function'
+                              ? initializer(_events)
+                              : _events.reduce(
+                                    (acc, curr) => reducer(acc, curr),
+                                    (reducer as InitReducer<P, E>)(
+                                        undefined,
+                                        INIT,
+                                    ),
+                                ),
                       cursor: _cursor,
                   }
-            let next: P = prev.state
+            let next = prev.state
             for (let i = _cursor - prev.cursor; i > 0; i--) {
                 next = reducer(next, _events[_events.length - i])
             }

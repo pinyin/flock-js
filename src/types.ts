@@ -18,11 +18,14 @@ export interface Unsubscribe {
 
 export interface GetState<E> {
     <P>(reducer: Reducer<P, E>, initializer: StateInitializer<P, E>): P
+    <P>(reducer: InitReducer<P, E>): P
 }
 
-export interface ReduxReducer<P, E> {
-    (prevState: P | undefined, event: E): P
+export interface InitReducer<P, E> {
+    (prev: P | undefined, event: E | typeof INIT): P
 }
+
+export const INIT = Symbol('INIT')
 
 export interface StateInitializer<P, E> {
     (events: ReadonlyArray<E>): P
