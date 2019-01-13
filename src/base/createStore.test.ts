@@ -1,5 +1,6 @@
 import { Store } from '../types'
 import { createStore } from './createStore'
+import { toInitializer } from './toInitializer'
 
 describe(`${createStore.name}`, () => {
     let store: Store<E>
@@ -7,11 +8,6 @@ describe(`${createStore.name}`, () => {
         store = createStore<E>([{ type: 'add', value: 1 }])
         const count = store.getState<number>(countReducer, countInitializer)
         expect(count).toBe(1)
-    })
-    it(`should support initialize reducer`, () => {
-        store.dispatch({ type: 'add', value: 2 })
-        const sum = store.getState<number>(sumReducer)
-        expect(sum).toBe(3)
     })
     it(`should call subscriber after an event is dispatched`, () => {
         const subscriber = jest.fn()
@@ -23,16 +19,14 @@ describe(`${createStore.name}`, () => {
     })
     it(`should cache result for the same reducer`, () => {
         const reducer = jest.fn()
-        const eventCount = store.getState<number>(
-            countReducer,
-            countInitializer,
-        )
-        store.getState<number>(reducer)
+        const eventCount =
+            store.getState<number>(countReducer, countInitializer) + 1
+        store.getState<number>(reducer, toInitializer(reducer))
         expect(reducer).toBeCalledTimes(eventCount)
-        store.getState<number>(reducer)
+        store.getState<number>(reducer, toInitializer(reducer))
         expect(reducer).toBeCalledTimes(eventCount)
         store.dispatch({ type: 'add', value: 2 })
-        store.getState<number>(reducer)
+        store.getState<number>(reducer, toInitializer(reducer))
         expect(reducer).toBeCalledTimes(eventCount + 1)
     })
     it(`should use initializer iff no cache is present`, () => {
@@ -80,3 +74,5 @@ function sumReducer(prev: number | undefined, event: E) {
             return prev - event.value
     }
 }
+
+const initializer = toInitializer(sumReducer)

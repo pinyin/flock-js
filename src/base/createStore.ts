@@ -1,42 +1,45 @@
 import { Reducer } from 'react'
-import { GetStateParams, ReduxReducer, StoreEnhancer, StoreForEnhancer, Subscriber, Unsubscribe } from '../types'
+import { ReduxReducer, StateInitializer, StoreEnhancer, StoreForEnhancer, Subscriber, Unsubscribe } from '../types'
 
 export function createStore<E>(
-    storage: Array<E>,
+    prepublish: Array<E>,
     enhancers: Array<StoreEnhancer<E>> = [],
 ): StoreForEnhancer<E> {
     return enhancers.reduceRight(
         (acc, curr) => curr(acc),
-        (storage: Array<E>) => createInnerStore(storage),
-    )(storage)
+        (prepublish: Array<E>) => createInnerStore(prepublish),
+    )(prepublish)
 }
 
-function createInnerStore<E>(storage: Array<E>): StoreForEnhancer<E> {
+function createInnerStore<E>(prepublish: Array<E>): StoreForEnhancer<E> {
     const _subscribers = new Set<Subscriber>()
-    let _events = storage
+    let _events = prepublish
     let _cursor = _events.length
     let _stateCache = new WeakMap<Reducer<any, E>, StateCacheItem>()
 
     return {
-        get cursor() {
+        cursor: () => {
             return _cursor
         },
-        set cursor(cursor: number) {
-            _cursor = cursor
-        },
-        get events() {
-            return _events
-        },
-        set events(events: Array<E>) {
-            _events = events
+        replaceEvents: (events: Array<E>, cursor?: number) => {
+            if (events !== _events) {
+                _events = events
+                _stateCache = new WeakMap()
+            }
+            if (typeof cursor === 'number' && cursor !== _cursor) {
+                _cursor = cursor
+                _stateCache = new WeakMap()
+            }
         },
         dispatch: (e: E) => {
             _events.push(e)
             _cursor++
             _subscribers.forEach(s => s()) // FIXME try-catch
         },
-        getState: <P>(...params: GetStateParams<P, E>): P => {
-            const [reducer, initializer] = params
+        getState: <P>(
+            reducer: Reducer<P, E>,
+            initializer: StateInitializer<P, E>,
+        ): P => {
             const isCacheReusable =
                 _stateCache.has(reducer) &&
                 _stateCache.get(reducer)!.cursor <= _cursor
