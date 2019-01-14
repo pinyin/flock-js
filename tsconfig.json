@@ -10,8 +10,10 @@
         "declarationMap": true,
         "strict": true,
         "declarationDir": "dist",
+        "importHelpers": true,
+        "noEmitHelpers": true,
         "lib": ["es6", "dom"]
     },
-    "include": ["src/index.ts"],
+    "exclude": ["dist", "node_modules"],
     "compileOnSave": true
 }

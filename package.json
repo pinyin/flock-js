@@ -1,9 +1,9 @@
 {
     "name": "flock-js",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Coordinate React components's states with event sourcing",
-    "main": "dist/src/index.js",
-    "types": "dist/src/index.d.ts",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "files": [
         "dist",
         "src"
@@ -46,5 +46,8 @@
         "react": "^16.8.0-alpha.0",
         "react-dom": "^16.8.0-alpha.0",
         "rxjs": "^6.3.3"
+    },
+    "dependencies": {
+        "tslib": "^1.9.3"
     }
 }
