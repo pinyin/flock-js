@@ -47,8 +47,7 @@ type E =
           value: number
       }
 
-function sumReducer(prev: number | undefined, event: E) {
-    prev = prev || 0
+function sumReducer(prev: number, event: E) {
     switch (event.type) {
         case 'add':
             return prev + event.value

@@ -12,5 +12,6 @@
         "declarationDir": "dist",
         "lib": ["es6", "dom"]
     },
-    "include": ["src/index.ts"]
+    "include": ["src/index.ts"],
+    "compileOnSave": true
 }

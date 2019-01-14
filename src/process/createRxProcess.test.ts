@@ -1,7 +1,7 @@
 import { EMPTY, merge, Observable, OperatorFunction, Subject } from 'rxjs'
 import { tap } from 'rxjs/operators'
 
-import { attachProcess, createStore, GetState, INIT } from '..'
+import { attachProcess, createStore, GetState } from '..'
 import { createRxProcess, RxOperatorFactory } from './createRxProcess'
 
 describe(`${createRxProcess.name}`, () => {
@@ -11,7 +11,7 @@ describe(`${createRxProcess.name}`, () => {
         const process: RxOperatorFactory<number> = (
             getState: GetState<number>,
         ): OperatorFunction<number, number> => {
-            count = getState<Array<number>>(collectEvents).length
+            count = getState<Array<number>>(collectEvents, e => [...e]).length
             return (obs: Observable<number>) =>
                 obs.pipe(
                     () => EMPTY,
@@ -23,7 +23,7 @@ describe(`${createRxProcess.name}`, () => {
         expect(count).toBe(1)
     })
     it(`should pass all events to process`, async () => {
-        const receive = jest.fn()
+        const taper = jest.fn()
         const subscriber = jest.fn()
         let count = 0
         const event$ = new Subject<number>()
@@ -31,9 +31,9 @@ describe(`${createRxProcess.name}`, () => {
         const process: RxOperatorFactory<number> = (
             getState: GetState<number>,
         ): OperatorFunction<number, number> => {
-            count = getState<Array<number>>(collectEvents).length
+            count = getState<Array<number>>(collectEvents, e => [...e]).length
             return (obs: Observable<number>) =>
-                merge(obs.pipe(() => EMPTY), event$).pipe(tap(receive))
+                merge(obs.pipe(() => EMPTY), event$).pipe(tap(taper))
         }
         createStore<number>(
             [1],
@@ -43,7 +43,7 @@ describe(`${createRxProcess.name}`, () => {
         event$.next(2)
         expect(count).toBe(1)
         expect(subscriber).toBeCalledTimes(1)
-        expect(receive).toBeCalledTimes(1)
+        expect(taper).toBeCalledTimes(1)
     })
     it(`should unsubscribe from observable before replaceEvents`, () => {
         const teardown = jest.fn()
@@ -61,16 +61,12 @@ describe(`${createRxProcess.name}`, () => {
         )
 
         expect(teardown).toBeCalledTimes(0)
-        store.replaceEvents([])
+        store.replaceEvents([], store.cursor())
         expect(teardown).toBeCalledTimes(1)
     })
 })
 
-function collectEvents<E>(
-    prev: Array<E> | undefined,
-    event: E | typeof INIT,
-): Array<E> {
-    const next = prev || []
-    if (event !== INIT) next.push(event)
-    return next
+function collectEvents<E>(prev: Array<E>, event: E): Array<E> {
+    prev.push(event)
+    return prev
 }

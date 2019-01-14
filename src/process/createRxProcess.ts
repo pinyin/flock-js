@@ -1,6 +1,6 @@
 import { Reducer } from 'react'
 import { OperatorFunction, Subject, Subscription } from 'rxjs'
-import { GetState, INIT, Process, Store } from '..'
+import { GetState, Process, Store } from '..'
 
 export function createRxProcess<E>(
     rxProcess: RxOperatorFactory<E>,
@@ -9,13 +9,14 @@ export function createRxProcess<E>(
         const subscription = new Subscription()
 
         const store$ = new Subject<E>()
+
+        const INIT = Symbol('init')
+        type INIT = typeof INIT
         const lastEvent: Reducer<E | INIT, E | INIT> = (_, e) => e
 
         subscription.add(
             store.subscribe(() => {
-                const event = store.getState(lastEvent, events =>
-                    events.length === 0 ? INIT : events[events.length - 1],
-                )
+                const event = store.getState(lastEvent, () => INIT as E | INIT)
 
                 if (event !== INIT) {
                     store$.next(event)

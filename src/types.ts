@@ -18,15 +18,7 @@ export interface Unsubscribe {
 
 export interface GetState<E> {
     <P>(reducer: Reducer<P, E>, initializer: StateInitializer<P, E>): P
-    <P>(reducer: InitReducer<P, E>): P
 }
-
-export interface InitReducer<P, E> {
-    (prev: P | undefined, event: E | typeof INIT): P
-}
-
-export type INIT = typeof INIT
-export const INIT = Symbol('INIT')
 
 export interface StateInitializer<P, E> {
     (events: ReadonlyArray<E>): P
@@ -34,7 +26,7 @@ export interface StateInitializer<P, E> {
 
 export interface StoreForEnhancer<E> extends Store<E> {
     cursor(): number
-    replaceEvents(events: Array<E>, cursor?: number): void
+    replaceEvents(events: Array<E>, cursor: number): void
 }
 
 export interface StoreEnhancer<E> {

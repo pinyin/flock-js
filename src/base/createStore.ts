@@ -1,7 +1,5 @@
 import { Reducer } from 'react'
 import {
-    INIT,
-    InitReducer,
     StateInitializer,
     StoreEnhancer,
     StoreForEnhancer,
@@ -45,8 +43,8 @@ function createInnerStore<E>(prepublish: Array<E>): StoreForEnhancer<E> {
             _subscribers.forEach(s => s()) // FIXME try-catch
         },
         getState: <P>(
-            reducer: Reducer<P, E> | InitReducer<P, E>,
-            initializer?: StateInitializer<P, E>,
+            reducer: Reducer<P, E>,
+            initializer: StateInitializer<P, E>,
         ): P => {
             const isCacheUsable =
                 _stateCache.has(reducer) &&
@@ -54,16 +52,7 @@ function createInnerStore<E>(prepublish: Array<E>): StoreForEnhancer<E> {
             const prev = isCacheUsable
                 ? _stateCache.get(reducer)!
                 : {
-                      state:
-                          typeof initializer === 'function'
-                              ? initializer(_events)
-                              : _events.reduce(
-                                    (acc, curr) => reducer(acc, curr),
-                                    (reducer as InitReducer<P, E>)(
-                                        undefined,
-                                        INIT,
-                                    ),
-                                ),
+                      state: initializer(_events),
                       cursor: _cursor,
                   }
             let next = prev.state

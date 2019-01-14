@@ -11,7 +11,7 @@
     "sideEffects": false,
     "scripts": {
         "prepublishOnly": "rm -rf dist && npx tsc",
-        "test": "npx jest",
+        "test": "npx tsc && npx jest",
         "format": "npx prettier --write **/*.{js,jsx,ts,tsx,json}"
     },
     "repository": {

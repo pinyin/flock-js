@@ -18,15 +18,13 @@ describe(`${createStore.name}`, () => {
     })
     it(`should cache result for the same reducer`, () => {
         const reducer = jest.fn()
-        const eventCount =
-            store.getState<number>(countReducer, countInitializer) + 1
-        store.getState<number>(reducer)
-        expect(reducer).toBeCalledTimes(eventCount)
-        store.getState<number>(reducer)
-        expect(reducer).toBeCalledTimes(eventCount)
+        store.getState<number>(reducer, () => 0)
+        expect(reducer).toBeCalledTimes(0)
+        store.getState<number>(reducer, () => 0)
+        expect(reducer).toBeCalledTimes(0)
         store.dispatch({ type: 'add', value: 2 })
-        store.getState<number>(reducer)
-        expect(reducer).toBeCalledTimes(eventCount + 1)
+        store.getState<number>(reducer, () => 0)
+        expect(reducer).toBeCalledTimes(1)
     })
     it(`should use initializer iff no cache is present`, () => {
         const reducer = jest.fn()

@@ -3,32 +3,37 @@ import { attachProcess, Process } from './attachProcess'
 
 describe(`${attachProcess.name}`, () => {
     it(`should forward all events to process`, () => {
-        const receive = jest.fn()
         const reducer = jest.fn()
+        const initializer = jest.fn()
         const process: Process<E> = (store: Store<E>) => {
-            store.getState(reducer)
-            return store.subscribe(receive)
+            store.getState(reducer, initializer)
+            return store.subscribe(() => {
+                console.log('evnet')
+                store.getState(reducer, initializer)
+            })
         }
         const store = createStore<E>(
             [{ type: 'add', value: 0 }],
             [attachProcess(process)],
         )
-        expect(reducer).toBeCalledTimes(2)
-        expect(receive).toBeCalledTimes(0)
-        store.replaceEvents([])
-        store.replaceEvents([])
-        expect(reducer).toBeCalledTimes(4)
-        expect(receive).toBeCalledTimes(0)
-        store.dispatch({ type: 'add', value: 0 })
-        expect(receive).toBeCalledTimes(1)
+        expect(reducer).toBeCalledTimes(0)
+        expect(initializer).toBeCalledTimes(1)
+        store.replaceEvents([], store.cursor())
+        store.replaceEvents([], store.cursor())
+        expect(reducer).toBeCalledTimes(0)
+        expect(initializer).toBeCalledTimes(3)
+        store.dispatch({ type: 'add', value: 1 })
+        expect(reducer).toBeCalledTimes(1)
+        expect(initializer).toBeCalledTimes(3)
     })
     it(`should restart process on replaceEvents`, () => {
-        const receive = jest.fn()
         const reducer = jest.fn()
+        const subscriber = jest.fn(reducer)
+        const initializer = jest.fn()
         const terminate = jest.fn()
         const process: Process<E> = (store: Store<E>) => {
-            store.getState(reducer)
-            const unsubscribe = store.subscribe(receive)
+            store.getState(reducer, initializer)
+            const unsubscribe = store.subscribe(subscriber)
             return () => {
                 terminate()
                 unsubscribe()
@@ -38,16 +43,21 @@ describe(`${attachProcess.name}`, () => {
             [{ type: 'add', value: 0 }],
             [attachProcess(process)],
         )
-        expect(reducer).toBeCalledTimes(2)
-        expect(receive).toBeCalledTimes(0)
+        expect(reducer).toBeCalledTimes(0)
+        expect(initializer).toBeCalledTimes(1)
+        expect(subscriber).toBeCalledTimes(0)
         expect(terminate).toBeCalledTimes(0)
-        store.replaceEvents([])
-        store.replaceEvents([])
+        store.replaceEvents([], store.cursor())
+        store.replaceEvents([], store.cursor())
+        expect(reducer).toBeCalledTimes(0)
+        expect(initializer).toBeCalledTimes(3)
+        expect(subscriber).toBeCalledTimes(0)
         expect(terminate).toBeCalledTimes(2)
-        expect(reducer).toBeCalledTimes(4)
-        expect(receive).toBeCalledTimes(0)
         store.dispatch({ type: 'add', value: 0 })
-        expect(receive).toBeCalledTimes(1)
+        expect(reducer).toBeCalledTimes(1)
+        expect(initializer).toBeCalledTimes(3)
+        expect(subscriber).toBeCalledTimes(1)
+        expect(terminate).toBeCalledTimes(2)
     })
 })
 
@@ -60,13 +70,3 @@ type E =
           type: 'minus'
           value: number
       }
-
-function sumReducer(prev: number | undefined, event: E) {
-    prev = prev || 0
-    switch (event.type) {
-        case 'add':
-            return prev + event.value
-        case 'minus':
-            return prev - event.value
-    }
-}

@@ -9,7 +9,9 @@ describe(`${useExternalReducer.name}`, () => {
         const store = createStore<E>([{ type: 'add', value: 1 }])
 
         function Sum() {
-            const [state] = useExternalReducer(store, sumReducer)
+            const [state] = useExternalReducer(store, sumReducer, e =>
+                e.reduce(sumReducer, 0),
+            )
             return <>{render(state)}</>
         }
         const testInstance = create(<Sum />)
@@ -21,7 +23,9 @@ describe(`${useExternalReducer.name}`, () => {
         const store = createStore<E>([{ type: 'add', value: 1 }])
 
         function Sum() {
-            const [state] = useExternalReducer(store, sumReducer)
+            const [state] = useExternalReducer(store, sumReducer, e =>
+                e.reduce(sumReducer, 0),
+            )
             return <>{render(state)}</>
         }
         const testInstance = create(<Sum />)
@@ -35,7 +39,9 @@ describe(`${useExternalReducer.name}`, () => {
         const store = createStore<E>([{ type: 'add', value: 1 }])
 
         function Sum() {
-            const [state] = useExternalReducer(store, sumReducer)
+            const [state] = useExternalReducer(store, sumReducer, e =>
+                e.reduce(sumReducer, 0),
+            )
             return <>{render(state)}</>
         }
         const testInstance = create(<Sum />)
@@ -60,7 +66,7 @@ type E =
           value: number
       }
 
-function sumReducer(prev: number | undefined, event: E) {
+function sumReducer(prev: number, event: E) {
     prev = prev || 0
     switch (event.type) {
         case 'add':

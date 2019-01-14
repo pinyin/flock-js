@@ -22,15 +22,15 @@ export function attachProcess<E>(...processes: Process<E>[]): StoreEnhancer<E> {
                 _listeners.add(subscriber)
                 return () => _listeners.delete(subscriber)
             },
-            replaceEvents: (events: Array<E>, cursor?: number): void => {
+            replaceEvents: (events: Array<E>, cursor: number): void => {
                 _terminators.forEach(terminate => terminate()) // TODO try-catch
                 _terminators.clear()
                 innerStore.replaceEvents(events, cursor)
                 processes.forEach(process => _terminators.add(process(store)))
             },
             dispatch: (event: E) => {
+                innerStore.dispatch(event)
                 _listeners.forEach(it => it()) // TODO try-catch
-                return innerStore.dispatch(event)
             },
         }
 
