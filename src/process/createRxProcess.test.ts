@@ -1,13 +1,8 @@
 import { EMPTY, merge, Observable, OperatorFunction, Subject } from 'rxjs'
 import { tap } from 'rxjs/operators'
 
-import { TestScheduler } from 'rxjs/testing'
 import { attachProcess, createStore, GetState, INIT } from '..'
 import { createRxProcess, RxOperatorFactory } from './createRxProcess'
-
-const scheduler = new TestScheduler((actual, expected) => {
-    expect(actual).toEqual(expected)
-})
 
 describe(`${createRxProcess.name}`, () => {
     it(`should initialize process with existing events`, () => {
