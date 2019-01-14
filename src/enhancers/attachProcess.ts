@@ -3,6 +3,7 @@ import {
     StoreCreator,
     StoreEnhancer,
     StoreForEnhancer,
+    Subscriber,
     Unsubscribe,
 } from '../types'
 
@@ -10,19 +11,32 @@ export function attachProcess<E>(...processes: Process<E>[]): StoreEnhancer<E> {
     return (inner: StoreCreator<E>) => (
         prepublish: Array<E>,
     ): StoreForEnhancer<E> => {
-        const _store = inner(prepublish)
         const _terminators = new Set()
-        processes.forEach(process => _terminators.add(process(_store)))
 
-        return {
-            ..._store,
+        const _listeners = new Set<Subscriber>()
+        const innerStore = inner(prepublish)
+
+        const store: StoreForEnhancer<E> = {
+            ...innerStore,
+            subscribe(subscriber: Subscriber) {
+                _listeners.add(subscriber)
+                return () => _listeners.delete(subscriber)
+            },
             replaceEvents: (events: Array<E>, cursor?: number): void => {
                 _terminators.forEach(terminate => terminate()) // TODO try-catch
                 _terminators.clear()
-                _store.replaceEvents(events, cursor)
-                processes.forEach(process => _terminators.add(process(_store)))
+                innerStore.replaceEvents(events, cursor)
+                processes.forEach(process => _terminators.add(process(store)))
+            },
+            dispatch: (event: E) => {
+                _listeners.forEach(it => it()) // TODO try-catch
+                return innerStore.dispatch(event)
             },
         }
+
+        processes.forEach(process => _terminators.add(process(store)))
+
+        return store
     }
 }
 
