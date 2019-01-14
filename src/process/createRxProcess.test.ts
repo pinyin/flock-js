@@ -23,7 +23,7 @@ describe(`${createRxProcess.name}`, () => {
         expect(count).toBe(1)
     })
     it(`should pass all events to process`, async () => {
-        const receive = jest.fn(e => console.log(e))
+        const receive = jest.fn()
         const subscriber = jest.fn()
         let count = 0
         const event$ = new Subject<number>()
@@ -45,7 +45,25 @@ describe(`${createRxProcess.name}`, () => {
         expect(subscriber).toBeCalledTimes(1)
         expect(receive).toBeCalledTimes(1)
     })
-    it(`should terminate process after unsubscribe`, () => {})
+    it(`should unsubscribe from observable before replaceEvents`, () => {
+        const teardown = jest.fn()
+
+        const process: RxOperatorFactory<number> = (): OperatorFunction<
+            number,
+            number
+        > => {
+            return () => Observable.create(() => teardown)
+        }
+
+        const store = createStore<number>(
+            [],
+            [attachProcess(createRxProcess(process))],
+        )
+
+        expect(teardown).toBeCalledTimes(0)
+        store.replaceEvents([])
+        expect(teardown).toBeCalledTimes(1)
+    })
 })
 
 function collectEvents<E>(

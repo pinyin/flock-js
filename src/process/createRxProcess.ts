@@ -27,7 +27,6 @@ export function createRxProcess<E>(
                 .pipe(rxProcess(store.getState))
                 .subscribe(e => store.dispatch(e)),
         )
-        store$.subscribe(e => console.log(e))
 
         return () => {
             subscription.unsubscribe()
