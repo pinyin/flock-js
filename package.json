@@ -1,6 +1,6 @@
 {
     "name": "flock-js",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Coordinate React components's states with event sourcing",
     "main": "dist/src/index.js",
     "types": "dist/src/index.d.ts",
@@ -34,15 +34,17 @@
         "@types/react-test-renderer": "^16.0.3",
         "jest": "^23.6.0",
         "prettier": "^1.15.3",
-        "react-test-renderer": "^16.8.0-alpha.0",
-        "ts-jest": "^23.10.5",
-        "typescript": "^3.2.2",
         "react": "^16.8.0-alpha.0",
-        "react-dom": "^16.8.0-alpha.0"
+        "react-dom": "^16.8.0-alpha.0",
+        "react-test-renderer": "^16.8.0-alpha.0",
+        "rxjs": "^6.3.3",
+        "ts-jest": "^23.10.5",
+        "typescript": "^3.2.2"
     },
     "peerDependencies": {
         "@types/react": "^16.7.18",
         "react": "^16.8.0-alpha.0",
-        "react-dom": "^16.8.0-alpha.0"
+        "react-dom": "^16.8.0-alpha.0",
+        "rxjs": "^6.3.3"
     }
 }
