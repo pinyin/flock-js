@@ -14,7 +14,7 @@ import { useContextReducer } from 'flock-js'
 // from
 const [state, dispatch] = useReducer(reducer, initialState)
 // to
-const [state, dispatch] = useContextReducer(reducer, () => initialState)
+const [state, dispatch] = useContextReducer(reducer, (actions) => /* compute initialState from actions */)
 ```
 
 Components will then be able to consume each other's actions.
