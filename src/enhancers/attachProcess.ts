@@ -1,7 +1,13 @@
-import { Store, StoreCreator, StoreEnhancer, StoreForEnhancer, Unsubscribe } from '../types'
+import {
+    Store,
+    StoreCreator,
+    StoreEnhancer,
+    StoreForEnhancer,
+    Unsubscribe,
+} from '../types'
 
 export function attachProcess<E>(...processes: Process<E>[]): StoreEnhancer<E> {
-    return (inner: StoreCreator<E>) => (
+    return (inner: StoreCreator<E>): StoreCreator<E> => (
         prepublish: Array<E>,
     ): StoreForEnhancer<E> => {
         const _terminators = new Set()

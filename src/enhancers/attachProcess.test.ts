@@ -8,7 +8,6 @@ describe(`${attachProcess.name}`, () => {
         const process: Process<E> = (store: Store<E>) => {
             store.getState(reducer, initializer)
             return store.subscribe(() => {
-                console.log('evnet')
                 store.getState(reducer, initializer)
             })
         }
