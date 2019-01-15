@@ -25,6 +25,7 @@ export interface StateInitializer<P, E> {
 }
 
 export interface StoreForEnhancer<E> extends Store<E> {
+    dispatch(): void
     events(): ReadonlyArray<E>
     cursor(): number
     replaceEvents(events: Array<E>, cursor: number): void

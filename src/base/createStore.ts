@@ -1,11 +1,5 @@
 import { Reducer } from 'react'
-import {
-    StateInitializer,
-    StoreEnhancer,
-    StoreForEnhancer,
-    Subscriber,
-    Unsubscribe,
-} from '../types'
+import { StateInitializer, StoreEnhancer, StoreForEnhancer, Subscriber, Unsubscribe } from '../types'
 
 export function createStore<E>(
     prepublish: Array<E>,
@@ -40,9 +34,11 @@ function createInnerStore<E>(prepublish: Array<E>): StoreForEnhancer<E> {
                 _stateCache = new WeakMap()
             }
         },
-        dispatch: (e: E) => {
-            _events.push(e)
-            _cursor++
+        dispatch: (e?: E) => {
+            if (typeof e !== 'undefined') {
+                _events.push(e)
+                _cursor++
+            }
             _subscribers.forEach(s => s()) // FIXME try-catch
         },
         getState: <P>(
