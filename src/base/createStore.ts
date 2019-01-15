@@ -24,6 +24,9 @@ function createInnerStore<E>(prepublish: Array<E>): StoreForEnhancer<E> {
     let _stateCache = new WeakMap<Reducer<any, E>, StateCacheItem>()
 
     return {
+        events: () => {
+            return _events
+        },
         cursor: () => {
             return _cursor
         },
