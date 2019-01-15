@@ -1,5 +1,5 @@
 import { Dispatch, Reducer, useLayoutEffect, useState } from 'react'
-import { StateInitializer, Store } from '../types'
+import { StateInitializer, Store } from '../base/types'
 
 export function useExternalReducer<P, E>(
     store: Store<E>,

@@ -1,8 +1,14 @@
 import { Reducer } from 'react'
-import { StateInitializer, StoreEnhancer, StoreForEnhancer, Subscriber, Unsubscribe } from '../types'
+import {
+    StateInitializer,
+    StoreEnhancer,
+    StoreForEnhancer,
+    Subscriber,
+    Unsubscribe,
+} from './types'
 
 export function createStore<E>(
-    prepublish: Array<E>,
+    prepublish: Array<E> = [],
     enhancers: Array<StoreEnhancer<E>> = [],
 ): StoreForEnhancer<E> {
     return enhancers.reduceRight(

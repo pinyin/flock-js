@@ -32,7 +32,7 @@ export interface StateInitializer<P, E> {
 export interface StoreForEnhancer<E> extends Store<E> {
     dispatch(): void
     cursor(): number
-    replaceEvents(events: Array<E>, cursor: number): void
+    replaceEvents(events: Array<E>, cursor?: number): void
 }
 
 export interface StoreEnhancer<E> {

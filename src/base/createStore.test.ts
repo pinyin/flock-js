@@ -1,5 +1,5 @@
-import { Store } from '../types'
 import { createStore } from './createStore'
+import { Store } from './types'
 
 describe(`${createStore.name}`, () => {
     let store: Store<E>

@@ -1,4 +1,4 @@
-export * from './types'
+export * from './base/types'
 export { createStore } from './base/createStore'
 export { useContextReducer, StoreContext } from './react/useContextReducer'
 export { useExternalReducer } from './react/useExternalReducer'

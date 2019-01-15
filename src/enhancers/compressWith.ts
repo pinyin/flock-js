@@ -1,4 +1,4 @@
-import { StoreCreator, StoreEnhancer, StoreForEnhancer } from '../types'
+import { StoreCreator, StoreEnhancer, StoreForEnhancer } from '../base/types'
 
 const _setInterval = setInterval
 
@@ -14,14 +14,14 @@ export function compressWith<E>(
             function compress() {
                 const next = compressor(_store.events())
                 if (typeof next === 'undefined') return
-                _store.replaceEvents(next, _store.cursor())
+                _store.replaceEvents(next)
             }
 
             let handler = setInterval(compress, interval)
 
             return {
                 ..._store,
-                replaceEvents: (events: Array<E>, cursor: number): void => {
+                replaceEvents: (events: Array<E>, cursor?: number): void => {
                     const before = _store.events()
                     _store.replaceEvents(events, cursor)
                     if (before === _store.events()) return
