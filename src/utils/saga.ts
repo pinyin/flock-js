@@ -30,7 +30,7 @@ export function saga<I, O>(saga: SagaCreator<I, O>): OperatorFunction<I, O> {
             receive()
 
             return () => {
-                terminate.error(new SagaTerminated())
+                terminate.error(new SagaTerminated(saga.name))
             }
         })
     }
