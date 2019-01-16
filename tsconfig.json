@@ -12,7 +12,8 @@
         "declarationDir": "dist",
         "importHelpers": true,
         "noEmitHelpers": true,
-        "lib": ["es6", "dom"]
+        "downlevelIteration": true,
+        "lib": ["es6", "dom", "esnext.asynciterable"]
     },
     "exclude": ["dist", "node_modules"],
     "compileOnSave": true
