@@ -2,13 +2,13 @@ import { EMPTY, merge, Observable, OperatorFunction, Subject } from 'rxjs'
 import { tap } from 'rxjs/operators'
 
 import { attachProcess, createStore, GetState } from '..'
-import { createRxProcess, RxOperatorFactory } from './createRxProcess'
+import { createRxProcess, RxOperatorCreator } from './createRxProcess'
 
 describe(`${createRxProcess.name}`, () => {
     it(`should initialize process with existing events`, () => {
         const receive = jest.fn()
         let count = 0
-        const process: RxOperatorFactory<number> = (
+        const process: RxOperatorCreator<number> = (
             getState: GetState<number>,
         ): OperatorFunction<number, number> => {
             count = getState<Array<number>>(collectEvents, e => [...e]).length
@@ -28,7 +28,7 @@ describe(`${createRxProcess.name}`, () => {
         let count = 0
         const event$ = new Subject<number>()
 
-        const process: RxOperatorFactory<number> = (
+        const process: RxOperatorCreator<number> = (
             getState: GetState<number>,
         ): OperatorFunction<number, number> => {
             count = getState<Array<number>>(collectEvents, e => [...e]).length
@@ -48,7 +48,7 @@ describe(`${createRxProcess.name}`, () => {
     it(`should unsubscribe from observable before replaceEvents`, () => {
         const teardown = jest.fn()
 
-        const process: RxOperatorFactory<number> = (): OperatorFunction<
+        const process: RxOperatorCreator<number> = (): OperatorFunction<
             number,
             number
         > => {
