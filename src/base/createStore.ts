@@ -40,12 +40,13 @@ function createInnerStore<E>(prepublish: Array<E>): StoreForEnhancer<E> {
                 _stateCache = new WeakMap()
             }
         },
-        dispatch: (e?: E) => {
-            if (typeof e !== 'undefined') {
-                _events.push(e)
-                _cursor++
-            }
-            _subscribers.forEach(s => s()) // FIXME try-catch
+        refresh: () => {
+            _subscribers.forEach(s => s())
+        },
+        dispatch: (e: E) => {
+            _events.push(e)
+            _cursor++
+            _subscribers.forEach(s => s())
         },
         getState: <P>(
             reducer: Reducer<P, E>,

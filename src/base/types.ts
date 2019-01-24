@@ -30,7 +30,7 @@ export interface StateInitializer<P, E> {
 }
 
 export interface StoreForEnhancer<E> extends Store<E> {
-    dispatch(events?: E): void
+    refresh(): void
     cursor(): number
     replaceEvents(events: Array<E>, cursor?: number): void
 }
