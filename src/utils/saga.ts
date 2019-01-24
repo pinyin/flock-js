@@ -1,5 +1,5 @@
 import { merge, Observable, OperatorFunction, Subject, Subscriber } from 'rxjs'
-import { first } from 'rxjs/operators'
+import { first, share } from 'rxjs/operators'
 
 export function saga<I, O>(saga: SagaCreator<I, O>): OperatorFunction<I, O> {
     return (source: Observable<I>): Observable<O> => {
@@ -32,7 +32,7 @@ export function saga<I, O>(saga: SagaCreator<I, O>): OperatorFunction<I, O> {
             return () => {
                 terminate.error(new SagaTerminated(saga.name))
             }
-        })
+        }).pipe(share())
     }
 }
 
