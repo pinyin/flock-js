@@ -15,20 +15,13 @@ export function compressWith<E>(
                 const next = compressor(_store.events())
                 if (typeof next === 'undefined') return
                 _store.replaceEvents(next)
+                _store.refresh()
             }
 
-            let handler = setInterval(compress, interval)
+            setInterval(compress, interval)
 
             return {
                 ..._store,
-                replaceEvents: (events: Array<E>, cursor?: number): void => {
-                    const before = _store.events()
-                    _store.replaceEvents(events, cursor)
-                    if (before === _store.events()) return
-                    clearInterval(handler)
-                    handler = setInterval(compress, interval)
-                    _store.refresh()
-                },
             }
         }
     }
