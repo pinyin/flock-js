@@ -27,6 +27,7 @@ export function compressWith<E>(
                     if (before === _store.events()) return
                     clearInterval(handler)
                     handler = setInterval(compress, interval)
+                    _store.refresh()
                 },
             }
         }
