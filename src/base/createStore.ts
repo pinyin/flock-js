@@ -1,6 +1,6 @@
 import { Reducer } from 'react'
 import {
-    StateInitializer,
+    Initializer,
     StoreEnhancer,
     StoreForEnhancer,
     Subscriber,
@@ -50,7 +50,7 @@ function createInnerStore<E>(prepublish: Array<E>): StoreForEnhancer<E> {
         },
         getState: <P>(
             reducer: Reducer<P, E>,
-            initializer: StateInitializer<P, E>,
+            initializer: Initializer<P, E>,
         ): P => {
             const isCacheUsable =
                 _stateCache.has(reducer) &&

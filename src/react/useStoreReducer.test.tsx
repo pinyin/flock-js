@@ -1,15 +1,15 @@
 import * as React from 'react'
 import { create } from 'react-test-renderer'
 import { createStore } from '../base/createStore'
-import { useExternalReducer } from './useExternalReducer'
+import { useStoreReducer } from './useStoreReducer'
 
-describe(`${useExternalReducer.name}`, () => {
+describe(`${useStoreReducer.name}`, () => {
     it(`should initialize state when component created`, () => {
         const render = jest.fn(v => v.toString())
         const store = createStore<E>([{ type: 'add', value: 1 }])
 
         function Sum() {
-            const [state] = useExternalReducer(store, sumReducer, e =>
+            const [state] = useStoreReducer(store, sumReducer, e =>
                 e.reduce(sumReducer, 0),
             )
             return <>{render(state)}</>
@@ -23,7 +23,7 @@ describe(`${useExternalReducer.name}`, () => {
         const store = createStore<E>([{ type: 'add', value: 1 }])
 
         function Sum() {
-            const [state] = useExternalReducer(store, sumReducer, e =>
+            const [state] = useStoreReducer(store, sumReducer, e =>
                 e.reduce(sumReducer, 0),
             )
             return <>{render(state)}</>
@@ -39,7 +39,7 @@ describe(`${useExternalReducer.name}`, () => {
         const store = createStore<E>([{ type: 'add', value: 1 }])
 
         function Sum() {
-            const [state] = useExternalReducer(store, sumReducer, e =>
+            const [state] = useStoreReducer(store, sumReducer, e =>
                 e.reduce(sumReducer, 0),
             )
             return <>{render(state)}</>
@@ -53,6 +53,7 @@ describe(`${useExternalReducer.name}`, () => {
         expect(render).toBeCalledTimes(2)
         store.dispatch({ type: 'add', value: 1 })
         expect(testInstance.toJSON()).toBe('3')
+        expect(render).toBeCalledTimes(3)
     })
 })
 

@@ -6,15 +6,17 @@ Inspired by [Redux](https://redux.js.org).
 
 ## Usage
 
-In your React component, replace all `useReducer` with `useContextReducer`:
+In your React component, replace all `useReducer` with `useContextStoreReducer`:
 
 ```js
-import { useContextReducer } from 'flock-js'
+import { useContextStoreReducer, StoreContext } from 'flock-js'
+const store = createStore()
 
+// then update your code
 // from
 const [state, dispatch] = useReducer(reducer, initialState)
 // to
-const [state, dispatch] = useContextReducer(reducer, (actions) => /* compute initialState from actions */)
+const [state, dispatch] = useStoreReducer(store, reducer, (actions) => /* compute initialState from actions */)
 ```
 
 Components will then be able to consume each other's actions.

@@ -22,10 +22,10 @@ export interface Unsubscribe {
 }
 
 export interface GetState<E> {
-    <P>(reducer: Reducer<P, E>, initializer: StateInitializer<P, E>): P
+    <P>(reducer: Reducer<P, E>, initializer: Initializer<P, E>): P
 }
 
-export interface StateInitializer<P, E> {
+export interface Initializer<P, E> {
     (events: ReadonlyArray<E>): P
 }
 
