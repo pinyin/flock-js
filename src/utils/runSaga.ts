@@ -43,11 +43,3 @@ export class SagaTerminated extends Error {
         super(`Saga ${sagaName} is terminated by parent`)
     }
 }
-
-export function terminateAs(name?: string): OperatorFunction<any, never> {
-    return (source: Observable<any>): Observable<never> => {
-        return source.pipe(() => {
-            throw new SagaTerminated(name)
-        })
-    }
-}
