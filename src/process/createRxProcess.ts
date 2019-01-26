@@ -2,23 +2,26 @@ import { OperatorFunction, Subject, Subscription } from 'rxjs'
 import { GetState, Process, Store } from '..'
 
 export function createRxProcess<E>(
-    operatorFactory: RxOperatorCreator<E>,
+    createRxOperator: RxOperatorCreator<E>,
 ): Process<E> {
     return (store: Store<E>) => {
         const subscription = new Subscription()
 
         const store$ = new Subject<E>()
+        let cursor = store.events.length
 
         subscription.add(
             store.subscribe(() => {
-                if (store.events().length < 1) return
-                const event = store.events()[store.events().length - 1]
+                const newCursor = store.events().length
+                if (newCursor < 1 || newCursor === cursor) return
+                cursor = newCursor
+                const event = store.events()[newCursor - 1]
                 store$.next(event)
             }),
         )
         subscription.add(
             store$
-                .pipe(operatorFactory(store.getState))
+                .pipe(createRxOperator(store.getState))
                 .subscribe(e => store.dispatch(e)),
         )
 
