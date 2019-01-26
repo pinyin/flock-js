@@ -1,22 +1,18 @@
 import { merge, Observable, OperatorFunction, Subject, Subscriber } from 'rxjs'
-import { first, share } from 'rxjs/operators'
+import { share } from 'rxjs/operators'
 
-export function saga<I, O>(saga: SagaCreator<I, O>): OperatorFunction<I, O> {
+export function runSaga<I, O>(
+    createSaga: SagaCreator<I, O>,
+): OperatorFunction<I, O> {
     return (source: Observable<I>): Observable<O> => {
         return Observable.create((subscriber: Subscriber<O>) => {
-            const terminate = new Subject<any>()
+            const terminate = new Subject<never>()
 
-            async function next<T>(from: Observable<T>): Promise<T> {
-                return merge(from, terminate)
-                    .pipe(first())
-                    .toPromise()
-            }
-
-            const iterable = saga(merge(source, terminate), next)
+            const saga = createSaga(merge(source, terminate), terminate)
 
             async function receive() {
                 try {
-                    for await (const e of iterable) {
+                    for await (const e of saga) {
                         if (terminate.hasError) break
                         subscriber.next(e)
                     }
@@ -30,22 +26,28 @@ export function saga<I, O>(saga: SagaCreator<I, O>): OperatorFunction<I, O> {
             receive()
 
             return () => {
-                terminate.error(new SagaTerminated(saga.name))
+                terminate.error(new SagaTerminated(createSaga.name))
             }
         }).pipe(share())
     }
 }
 
 export interface SagaCreator<I, O = I> {
-    (source: Observable<I>, next: Next): AsyncIterableIterator<O>
+    (source: Observable<I>, terminate: Observable<never>): Saga<O>
 }
 
-export interface Next {
-    <E>(from: Observable<E>): Promise<E>
-}
+export interface Saga<O> extends AsyncIterableIterator<O> {}
 
 export class SagaTerminated extends Error {
     constructor(sagaName?: string) {
         super(`Saga ${sagaName} is terminated by parent`)
+    }
+}
+
+export function terminateAs(name?: string): OperatorFunction<any, never> {
+    return (source: Observable<any>): Observable<never> => {
+        return source.pipe(() => {
+            throw new SagaTerminated(name)
+        })
     }
 }

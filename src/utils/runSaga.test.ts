@@ -1,21 +1,22 @@
 import { Observable, Subject } from 'rxjs'
+import { first } from 'rxjs/internal/operators/first'
 import { shareReplay, toArray } from 'rxjs/operators'
-import { Next, saga } from './saga'
+import { runSaga } from './runSaga'
 
-describe(`${saga.name}`, () => {
+describe(`${runSaga.name}`, () => {
     it(`should pass all messages to saga iff saga is subscribed`, async () => {
         const source = new Subject()
         const received = jest.fn()
         async function* count(
             source: Observable<any>,
-            next: Next,
+            terminate: Observable<never>,
         ): AsyncIterableIterator<any> {
             while (true) {
-                const value = await next(source)
+                const value = await source.pipe(first()).toPromise()
                 received(value)
             }
         }
-        const destination = source.pipe(saga(count))
+        const destination = source.pipe(runSaga(count))
         source.next(1)
         await Promise.resolve()
         expect(received).toBeCalledTimes(0)
@@ -37,16 +38,16 @@ describe(`${saga.name}`, () => {
         const source = new Subject()
         async function* count(
             source: Observable<any>,
-            next: Next,
+            terminate: Observable<never>,
         ): AsyncIterableIterator<any> {
             while (true) {
-                const value = await next(source)
+                const value = await source.pipe(first()).toPromise()
                 if (value >= 3) return
                 yield value * 2
             }
         }
         const destination = source.pipe(
-            saga(count),
+            runSaga(count),
             toArray(),
             shareReplay(1),
         )
