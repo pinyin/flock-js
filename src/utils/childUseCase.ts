@@ -1,10 +1,9 @@
-import { Observable, Subject } from 'rxjs'
+import { Observable } from 'rxjs'
 import { first } from 'rxjs/internal/operators/first'
 import { tap } from 'rxjs/internal/operators/tap'
 import { async } from 'rxjs/internal/scheduler/async'
-import { observeOn, publish, share, shareReplay } from 'rxjs/operators'
+import { observeOn, share } from 'rxjs/operators'
 
-const NONE = Symbol('NONE')
 export async function* childUseCase<T>(
     source: Observable<T>,
 ): AsyncIterableIterator<T> {
@@ -18,9 +17,10 @@ export async function* childUseCase<T>(
     const hasNext = async () =>
         (await sharedSource.pipe(first(null, NONE)).toPromise()) !== NONE
     do {
-        console.log(cache)
         yield* cache
         cache = []
     } while (await hasNext())
     sharingSource.unsubscribe()
 }
+
+const NONE = Symbol('NONE')
