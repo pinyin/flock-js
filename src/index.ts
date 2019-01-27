@@ -11,3 +11,4 @@ export {
     UseCaseCreator,
 } from './utils/withUseCase'
 export { toAsyncIterator } from './utils/toAsyncIterator'
+export { fromAsyncIterator } from './utils/fromAsyncIterator'
