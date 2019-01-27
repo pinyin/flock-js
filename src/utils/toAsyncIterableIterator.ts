@@ -4,7 +4,7 @@ import { tap } from 'rxjs/internal/operators/tap'
 import { async } from 'rxjs/internal/scheduler/async'
 import { observeOn, share } from 'rxjs/operators'
 
-export async function* childUseCase<T>(
+export async function* toAsyncIterableIterator<T>(
     source: Observable<T>,
 ): AsyncIterableIterator<T> {
     let cache = new Array<T>()
