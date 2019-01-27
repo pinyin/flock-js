@@ -6,7 +6,7 @@ Inspired by [Redux](https://redux.js.org).
 
 ## Usage
 
-In your React component, replace all `useReducer` with `useContextStoreReducer`:
+In your React component, replace all `useReducer` with `useStoreReducer`:
 
 ```js
 import { useContextStoreReducer, StoreContext } from 'flock-js'
