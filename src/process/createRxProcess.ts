@@ -1,15 +1,14 @@
 import { OperatorFunction, Subject, Subscription } from 'rxjs'
 import { GetState, Process, Store } from '..'
 
-export function createRxProcess<E>(
-    createRxOperator: RxOperatorCreator<E>,
-): Process<E> {
+export function createRxProcess<E>(rxProcess: RxProcessCreator<E>): Process<E> {
     return (store: Store<E>) => {
         const subscription = new Subscription()
 
         const store$ = new Subject<E>()
         let cursor = store.events.length
 
+        subscription.add(store$)
         subscription.add(
             store.subscribe(() => {
                 const newCursor = store.events().length
@@ -21,17 +20,16 @@ export function createRxProcess<E>(
         )
         subscription.add(
             store$
-                .pipe(createRxOperator(store.getState))
+                .pipe(rxProcess(store.getState))
                 .subscribe(e => store.dispatch(e)),
         )
 
         return () => {
-            store$.unsubscribe()
             subscription.unsubscribe()
         }
     }
 }
 
-export interface RxOperatorCreator<E> {
+export interface RxProcessCreator<E> {
     (getState: GetState<E>): OperatorFunction<E, E>
 }
