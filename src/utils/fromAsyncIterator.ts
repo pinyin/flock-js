@@ -4,11 +4,15 @@ export function fromAsyncIterator<T>(source: AsyncIterator<T>): Observable<T> {
     let next = source.next()
 
     return Observable.create((subscriber: Subscriber<T>) => {
-        let unsubscribed:boolean = false
+        let unsubscribed: boolean = false
 
         async function receive() {
             try {
-                for (; !(await next).done && !unsubscribed; next = source.next()) {
+                for (
+                    ;
+                    !unsubscribed && !(await next).done;
+                    next = source.next()
+                ) {
                     subscriber.next((await next).value)
                 }
                 subscriber.complete()
