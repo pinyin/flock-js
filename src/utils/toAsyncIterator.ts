@@ -5,19 +5,19 @@ export async function* toAsyncIterator<T>(
     realtime: boolean = false,
 ): AsyncIterableIterator<T> {
     const cache = new Array<T>()
-    let next = () => {}
+    let next = (hasNext: boolean) => {}
     let error = (error: Error) => {}
     let isCompleted = false
     const sharingSource = source.subscribe(
         v => {
             if (realtime) cache.pop()
             cache.push(v)
-            next()
+            next(true)
         },
         e => error(e),
         () => {
             isCompleted = true
-            next()
+            next(false)
         },
     )
     const untilNext = (): Promise<boolean> =>
