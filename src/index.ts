@@ -5,10 +5,5 @@ export { StoreBuilder, StoreBuilderProps } from './react/StoreBuilder'
 export { attachProcess, Process } from './enhancers/attachProcess'
 export { StoreCompressor, compressWith } from './enhancers/compressWith'
 export { createRxProcess, RxOperatorCreator } from './process/createRxProcess'
-export {
-    UseCaseTerminated,
-    withUseCase,
-    UseCaseCreator,
-} from './utils/withUseCase'
 export { toAsyncIterator } from './utils/toAsyncIterator'
 export { fromAsyncIterator } from './utils/fromAsyncIterator'
