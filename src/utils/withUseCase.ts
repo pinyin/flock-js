@@ -1,24 +1,24 @@
 import { merge, Observable, OperatorFunction, Subject, Subscriber } from 'rxjs'
 import { share } from 'rxjs/operators'
 
-export function attachSaga<I, O>(
-    createSaga: SagaCreator<I, O>,
+export function withUseCase<I, O>(
+    createUseCase: UseCaseCreator<I, O>,
 ): OperatorFunction<I, O> {
     return (source: Observable<I>): Observable<O> => {
         return Observable.create((subscriber: Subscriber<O>) => {
             const terminate = new Subject<never>()
 
-            const saga = createSaga(merge(source, terminate), terminate)
+            const useCase = createUseCase(merge(source, terminate), terminate)
 
             async function receive() {
                 try {
-                    for await (const e of saga) {
+                    for await (const e of useCase) {
                         if (terminate.hasError) break
                         subscriber.next(e)
                     }
                     subscriber.complete()
                 } catch (e) {
-                    if (e instanceof SagaTerminated) return
+                    if (e instanceof UseCaseTerminated) return
                     subscriber.error(e)
                 }
             }
@@ -26,20 +26,20 @@ export function attachSaga<I, O>(
             receive()
 
             return () => {
-                terminate.error(new SagaTerminated(createSaga.name))
+                terminate.error(new UseCaseTerminated(createUseCase.name))
             }
         }).pipe(share())
     }
 }
 
-export interface SagaCreator<I, O = I> {
-    (source: Observable<I>, terminate: Observable<never>): Saga<O>
+export interface UseCaseCreator<I, O = I> {
+    (source: Observable<I>, terminate: Observable<never>): UseCase<O>
 }
 
-export interface Saga<O> extends AsyncIterableIterator<O> {}
+export interface UseCase<O> extends AsyncIterableIterator<O> {}
 
-export class SagaTerminated extends Error {
-    constructor(sagaName?: string) {
-        super(`Saga ${sagaName} is terminated by parent`)
+export class UseCaseTerminated extends Error {
+    constructor(useCaseName?: string) {
+        super(`UseCase ${useCaseName} is terminated by parent`)
     }
 }
