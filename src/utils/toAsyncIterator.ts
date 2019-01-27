@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs'
 
-export async function* toAsyncIterableIterator<T>(
+export async function* toAsyncIterator<T>(
     source: Observable<T>,
     realtime: boolean = false,
 ): AsyncIterableIterator<T> {

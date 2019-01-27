@@ -1,10 +1,10 @@
 import { from } from 'rxjs/internal/observable/from'
-import { toAsyncIterableIterator } from './toAsyncIterableIterator'
+import { toAsyncIterator } from './toAsyncIterator'
 
-describe(`${toAsyncIterableIterator.name}`, () => {
+describe(`${toAsyncIterator.name}`, () => {
     it(`should convert observable to async iterator`, async () => {
         const source = [1, 2, 3, 4]
-        const iterable = toAsyncIterableIterator(from(source))
+        const iterable = toAsyncIterator(from(source))
         const result = []
         for await (const value of iterable) {
             result.push(value)
@@ -14,7 +14,7 @@ describe(`${toAsyncIterableIterator.name}`, () => {
 
     it(`should not lose emitted value`, async () => {
         const source = [1, 2, 3, 4]
-        const iterable = toAsyncIterableIterator(from(source))
+        const iterable = toAsyncIterator(from(source))
         const result = []
         for await (const value of iterable) {
             await new Promise(r => setTimeout(r, 10))
@@ -25,7 +25,7 @@ describe(`${toAsyncIterableIterator.name}`, () => {
 
     it(`should skip previous value in realtime mode`, async () => {
         const source = [1, 2, 3, 4]
-        const iterable = toAsyncIterableIterator(from(source), true)
+        const iterable = toAsyncIterator(from(source), true)
         const result = []
         for await (const value of iterable) {
             await new Promise(r => setTimeout(r, 10))
