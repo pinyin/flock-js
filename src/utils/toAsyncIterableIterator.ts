@@ -15,7 +15,10 @@ export async function* toAsyncIterableIterator<T>(
             next()
         },
         e => error(e),
-        () => (isCompleted = true),
+        () => {
+            isCompleted = true
+            next()
+        },
     )
     const untilNext = (): Promise<boolean> =>
         new Promise((resolve, reject) => {
@@ -32,4 +35,3 @@ export async function* toAsyncIterableIterator<T>(
         sharingSource.unsubscribe()
     }
 }
-
