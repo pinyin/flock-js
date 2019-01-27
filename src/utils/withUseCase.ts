@@ -33,10 +33,10 @@ export function withUseCase<I, O>(
 }
 
 export interface UseCaseCreator<I, O = I> {
-    (source: Observable<I>, terminate: Observable<never>): UseCase<O>
+    (inputs: Observable<I>, terminate: Observable<never>): UseCaseOutput<O>
 }
 
-export interface UseCase<O> extends AsyncIterableIterator<O> {}
+export interface UseCaseOutput<T> extends AsyncIterableIterator<T> {}
 
 export class UseCaseTerminated extends Error {
     constructor(useCaseName?: string) {
