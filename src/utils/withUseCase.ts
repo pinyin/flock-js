@@ -1,7 +1,7 @@
 import { merge, Observable, OperatorFunction, Subject, Subscriber } from 'rxjs'
 import { share } from 'rxjs/operators'
 
-export function runSaga<I, O>(
+export function attachSaga<I, O>(
     createSaga: SagaCreator<I, O>,
 ): OperatorFunction<I, O> {
     return (source: Observable<I>): Observable<O> => {

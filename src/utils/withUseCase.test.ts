@@ -1,10 +1,10 @@
 import { Observable, Subject } from 'rxjs'
 import { first } from 'rxjs/internal/operators/first'
 import { shareReplay, toArray } from 'rxjs/operators'
-import { runSaga } from './runSaga'
+import { withUseCase } from './withUseCase'
 
-describe(`${runSaga.name}`, () => {
-    it(`should pass all messages to saga iff saga is subscribed`, async () => {
+describe(`${withUseCase.name}`, () => {
+    it(`should pass all messages to useCase iff useCase is subscribed`, async () => {
         const source = new Subject()
         const received = jest.fn()
         async function* count(
@@ -16,7 +16,7 @@ describe(`${runSaga.name}`, () => {
                 received(value)
             }
         }
-        const destination = source.pipe(runSaga(count))
+        const destination = source.pipe(withUseCase(count))
         source.next(1)
         await Promise.resolve()
         expect(received).toBeCalledTimes(0)
@@ -34,7 +34,7 @@ describe(`${runSaga.name}`, () => {
         expect(received).toBeCalledTimes(2)
     })
 
-    it(`should convert events passed by saga to downstream observable`, async () => {
+    it(`should convert events passed by useCase to downstream observable`, async () => {
         const source = new Subject()
         async function* count(
             source: Observable<any>,
@@ -47,7 +47,7 @@ describe(`${runSaga.name}`, () => {
             }
         }
         const destination = source.pipe(
-            runSaga(count),
+            withUseCase(count),
             toArray(),
             shareReplay(1),
         )
