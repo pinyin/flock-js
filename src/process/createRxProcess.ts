@@ -3,18 +3,24 @@ import { GetState, Process, Store } from '..'
 
 export function createRxProcess<E>(rxProcess: RxProcessCreator<E>): Process<E> {
     return (store: Store<E>) => {
+        function reducer(prev: any, event: E) {
+            return event
+        }
+        function getLatestEvent() {
+            return store.getState(reducer, events =>
+                events.reduce<E | typeof EMPTY>(reducer, EMPTY),
+            )
+        }
+
         const subscription = new Subscription()
 
         const store$ = new Subject<E>()
-        let cursor = store.events.length
 
         subscription.add(store$)
         subscription.add(
             store.subscribe(() => {
-                const newCursor = store.events().length
-                if (newCursor < 1 || newCursor === cursor) return
-                cursor = newCursor
-                const event = store.events()[newCursor - 1]
+                const event = getLatestEvent()
+                if(event === EMPTY) return
                 store$.next(event)
             }),
         )
@@ -33,3 +39,5 @@ export function createRxProcess<E>(rxProcess: RxProcessCreator<E>): Process<E> {
 export interface RxProcessCreator<E> {
     (getState: GetState<E>): OperatorFunction<E, E>
 }
+
+const EMPTY= Symbol('EMPTY')

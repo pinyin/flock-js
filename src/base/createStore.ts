@@ -1,11 +1,5 @@
 import { Reducer } from 'react'
-import {
-    Initializer,
-    StoreEnhancer,
-    StoreForEnhancer,
-    Subscriber,
-    Unsubscribe,
-} from './types'
+import { Initializer, StoreEnhancer, StoreForEnhancer, Subscriber, Unsubscribe } from './types'
 
 export function createStore<E>(
     prepublish: Array<E> = [],
@@ -39,9 +33,6 @@ function createInnerStore<E>(prepublish: Array<E>): StoreForEnhancer<E> {
                 _cursor = cursor
                 _stateCache = new WeakMap()
             }
-        },
-        refresh: () => {
-            _subscribers.forEach(s => s())
         },
         dispatch: (e: E) => {
             _events.push(e)

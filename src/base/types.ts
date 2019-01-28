@@ -4,11 +4,6 @@ export interface Store<E> {
     readonly subscribe: Subscribe
     readonly getState: GetState<E>
     readonly dispatch: Dispatch<E>
-    readonly events: GetEvents<E>
-}
-
-export interface GetEvents<E> {
-    (): ReadonlyArray<E>
 }
 
 export interface Subscribe {
@@ -30,7 +25,7 @@ export interface Initializer<P, E> {
 }
 
 export interface StoreForEnhancer<E> extends Store<E> {
-    refresh(): void
+    events(): ReadonlyArray<E>
     cursor(): number
     replaceEvents(events: Array<E>, cursor?: number): void
 }

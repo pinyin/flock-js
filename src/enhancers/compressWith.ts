@@ -15,7 +15,6 @@ export function compressWith<E>(
                 const next = compressor(_store.events())
                 if (typeof next === 'undefined') return
                 _store.replaceEvents(next)
-                _store.refresh()
             }
 
             setInterval(compress, interval)
