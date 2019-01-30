@@ -5,18 +5,19 @@ export function fromAsyncIterator<T>(
     returnOnUnsubscribe: boolean = true,
 ): Observable<T> {
     const subscribers = new Set<Subscriber<T>>()
+
+    function returnIteratorIfNeeded() {
+        if (returnOnUnsubscribe && typeof source.return === 'function')
+            source.return()
+    }
+
     function startForwardingTo(ref: Subscriber<T>) {
         subscribers.add(ref)
         if (subscribers.size === 1) startForwarding()
     }
     function stopForwardingTo(ref: Subscriber<T>) {
         subscribers.delete(ref)
-        if (
-            returnOnUnsubscribe &&
-            subscribers.size === 0 &&
-            typeof source.return === 'function'
-        )
-            source.return()
+        if (subscribers.size === 0) returnIteratorIfNeeded()
     }
 
     async function startForwarding() {
@@ -38,7 +39,7 @@ export function fromAsyncIterator<T>(
                 s.error(e)
             }
         } finally {
-            if (typeof source.return === 'function') source.return()
+            returnIteratorIfNeeded()
         }
     }
 
