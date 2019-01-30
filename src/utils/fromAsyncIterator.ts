@@ -2,7 +2,7 @@ import { Observable, Subscriber } from 'rxjs'
 
 export function fromAsyncIterator<T>(
     source: AsyncIterator<T>,
-    returnOnUnsubscribe: boolean = true,
+    returnOnUnsubscribe: boolean = false,
 ): Observable<T> {
     const subscribers = new Set<Subscriber<T>>()
 

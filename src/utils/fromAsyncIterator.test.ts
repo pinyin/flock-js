@@ -14,7 +14,7 @@ describe(`${fromAsyncIterator.name}`, () => {
             yield source[3]
         }
 
-        const obs = fromAsyncIterator(source_())
+        const obs = fromAsyncIterator(source_(), true)
         expect(
             await obs
                 .pipe(
@@ -32,7 +32,7 @@ describe(`${fromAsyncIterator.name}`, () => {
                 .toPromise(),
         ).toEqual([])
 
-        const obs2 = fromAsyncIterator(source_(), false)
+        const obs2 = fromAsyncIterator(source_())
         expect(
             await obs2
                 .pipe(
