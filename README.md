@@ -2,7 +2,7 @@
 
 Coordinate React components' states with event sourcing.
 
-Inspired by [Redux](https://redux.js.org).
+Inspired by [Flux](https://facebook.github.io/flux/), [Redux](https://redux.js.org) and [Redux Saga](https://redux-saga.js.org/).
 
 ## Usage
 
