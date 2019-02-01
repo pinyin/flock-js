@@ -1,5 +1,7 @@
 # flock-js
 
+[![Build Status](https://travis-ci.com/pinyin/flock-js.svg?branch=master)](https://travis-ci.com/pinyin/flock-js)
+
 Coordinate React components' states with event sourcing.
 
 Inspired by [Flux](https://facebook.github.io/flux/), [Redux](https://redux.js.org) and [Redux Saga](https://redux-saga.js.org/).
