@@ -1,10 +1,4 @@
-import {
-    Store,
-    StoreCreator,
-    StoreEnhancer,
-    StoreForEnhancer,
-    Unsubscribe,
-} from '..'
+import { Store, StoreCreator, StoreEnhancer, StoreForEnhancer, Unsubscribe } from '..'
 
 export function attachProcess<E>(...processes: Process<E>[]): StoreEnhancer<E> {
     return (inner: StoreCreator<E>): StoreCreator<E> => (
@@ -17,10 +11,16 @@ export function attachProcess<E>(...processes: Process<E>[]): StoreEnhancer<E> {
         const store: StoreForEnhancer<E> = {
             ..._store,
             replaceEvents: (events: Array<E>, cursor?: number): void => {
-                _terminators.forEach(terminate => terminate())
-                _terminators.clear()
+                if (cursor !== _store.cursor()) {
+                    _terminators.forEach(terminate => terminate())
+                    _terminators.clear()
+                }
                 _store.replaceEvents(events, cursor)
-                processes.forEach(process => _terminators.add(process(store)))
+                if (_terminators.size === 0) {
+                    processes.forEach(process =>
+                        _terminators.add(process(store)),
+                    )
+                }
             },
         }
 
