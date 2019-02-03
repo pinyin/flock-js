@@ -27,7 +27,6 @@ function createInnerStore<E>(prepublish: Array<E>): StoreForEnhancer<E> {
         replaceEvents: (events: Array<E>, cursor?: number) => {
             if (events !== _events) {
                 _events = events
-                _stateCache = new WeakMap()
             }
             if (typeof cursor === 'number' && cursor !== _cursor) {
                 _cursor = cursor
