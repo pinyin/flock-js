@@ -16,9 +16,9 @@ describe(`${createUseCase.name}`, () => {
         }
         const store = createStore([], [attachProcess(createUseCase(useCase))])
         expect(store.getState(sumReducer, sumInitializer)).toEqual(0)
-        store.dispatch({type: 'add', value: 1})
-        store.dispatch({type: 'add', value: 2})
-        await new Promise(t=> setTimeout(t))
+        store.dispatch({ type: 'add', value: 1 })
+        store.dispatch({ type: 'add', value: 2 })
+        await new Promise(t => setTimeout(t))
         expect(store.getState(sumReducer, sumInitializer)).toEqual(4)
     })
 })

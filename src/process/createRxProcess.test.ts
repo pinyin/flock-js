@@ -52,7 +52,7 @@ describe(`${createRxProcess.name}`, () => {
             number,
             number
         > => {
-            return () => Observable.create(() => teardown)
+            return () => new Observable(() => teardown)
         }
 
         const store = createStore<number>(
@@ -61,7 +61,7 @@ describe(`${createRxProcess.name}`, () => {
         )
 
         expect(teardown).toBeCalledTimes(0)
-        store.replaceEvents([], store.cursor())
+        store.replaceEvents([], 8)
         expect(teardown).toBeCalledTimes(1)
     })
 })
